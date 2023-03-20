@@ -1,0 +1,3 @@
+[submodule "packages/ru_ru"]
+	path = packages/ru_ru
+	url = https://github.com/likhobory/SuiteCRM7RU.git

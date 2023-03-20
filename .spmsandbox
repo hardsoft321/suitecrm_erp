@@ -1,0 +1,20 @@
+; For each package use section with unique name.
+; `path` defines relative path to folder with package sources.
+; `id` defines package id_name.
+; `version` must be specified.
+; `environment` (optional) means that this package must be installed in some custom
+;     environment other than production. Multiple environments separated by spaces.
+; `overwrite` (optional) means that this package overwrites some packages and
+;     must be reinstalled after them. Their id_names separated by spaces should be
+;     defined here.
+;
+; Example:
+; [example]
+;     path = packages/example_dir
+;     id = example_id
+;     version = 1.0.0
+
+[ru_ru]
+    path = packages/ru_ru
+    id = ru_ru
+    version = 7.13.2
