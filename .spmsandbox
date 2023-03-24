@@ -18,3 +18,13 @@
     path = packages/ru_ru
     id = ru_ru
     version = 7.13.2
+
+[erp]
+    path = packages/erp
+    id = hs321_erp
+    version = 0.0.1
+
+[erp_forms]
+    path = packages/erp_forms
+    id = hs321_erp_forms
+    version = 0.0.1

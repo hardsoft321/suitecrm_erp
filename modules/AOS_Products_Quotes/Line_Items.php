@@ -24,7 +24,7 @@
 
 function display_lines($focus, $field, $value, $view)
 {
-    global $sugar_config, $locale, $app_list_strings, $mod_strings;
+    global $sugar_config, $locale, $app_list_strings, $mod_strings, $timedate;
 
     $enable_groups = (int)$sugar_config['aos']['lineItems']['enableGroups'];
     $total_tax = (int)$sugar_config['aos']['lineItems']['totalTax'];
@@ -50,7 +50,8 @@ function display_lines($focus, $field, $value, $view)
             $html .= "</div>";
         }
         $html .= '<input type="hidden" name="vathidden" id="vathidden" value="'.get_select_options_with_id($app_list_strings['vat_list'], '').'">
-				  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">';
+				  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">
+                  <input type="hidden" name="wipstatuseshidden" id="wipstatuseshidden" value="'.get_select_options_with_id($app_list_strings['porduct_quotes_wip_statuses'], '').'">';
         if ($focus->id != '') {
             require_once('modules/AOS_Products_Quotes/AOS_Products_Quotes.php');
             require_once('modules/AOS_Line_Item_Groups/AOS_Line_Item_Groups.php');
@@ -150,11 +151,18 @@ function display_lines($focus, $field, $value, $view)
                 $groupEnd .= "<td class='tabDetailViewDL' style='text-align: right;padding:2px;'>".currency_format_number($group_item->total_amount, $params)."</td>";
                 $groupEnd .= "</tr>";
             }
+            if (isset($app_list_strings['porduct_quotes_wip_statuses'][$line_item->wip_status])) {
+                $wip_status = $app_list_strings['porduct_quotes_wip_statuses'][$line_item->wip_status];
+            } else {
+                $wip_status = $line_item->wip_status;
+            }
             if ($line_item->product_id != '0' && $line_item->product_id != null) {
                 if ($productCount == 0) {
                     $product .= "<tr>";
-                    $product .= "<td width='5%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>&nbsp;</td>";
                     $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_PRODUCT_QUANITY']."</td>";
+                    $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_ACCDATE']."</td>";
+                    $product .= "<td width='5%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>&nbsp;</td>";
+                    $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_WIP_STATUS']."</td>";                    
                     $product .= "<td width='12%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_PRODUCT_NAME']."</td>";
                     $product .= "<td width='12%' class='tabDetailViewDL' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_LIST_PRICE']."</td>";
                     $product .= "<td width='12%' class='tabDetailViewDL' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_DISCOUNT_AMT']."</td>";
@@ -168,6 +176,8 @@ function display_lines($focus, $field, $value, $view)
                 $product .= "<tr>";
                 $product_note = wordwrap($line_item->description, 40, "<br />\n");
                 $product .= "<td class='tabDetailViewDF' style='text-align: left; padding:2px;'>".++$productCount."</td>";
+                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".$line_item->accdate."</td>";                
+                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".$wip_status."</td>";
                 $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".stripDecimalPointsAndTrailingZeroes(format_number($line_item->product_qty), $sep[1])."</td>";
 
                 $product .= "<td class='tabDetailViewDF' style='padding:2px;'><a href='index.php?module=AOS_Products&action=DetailView&record=".$line_item->product_id."' class='tabDetailViewDFLink'>".$line_item->name."</a><br />".$product_note."</td>";
@@ -188,6 +198,8 @@ function display_lines($focus, $field, $value, $view)
                 if ($serviceCount == 0) {
                     $service .= "<tr>";
                     $service .= "<td width='5%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>&nbsp;</td>";
+                    $service .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_PRODUCT_QUANITY']."</td>";
+                    $service .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_ACCDATE']."</td>";                    
                     $service .= "<td width='46%' class='dataLabel' style='text-align: left;padding:2px;' colspan='2' scope='row'>".$mod_strings['LBL_SERVICE_NAME']."</td>";
                     $service .= "<td width='12%' class='dataLabel' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_SERVICE_LIST_PRICE']."</td>";
                     $service .= "<td width='12%' class='dataLabel' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_SERVICE_DISCOUNT']."</td>";
@@ -200,6 +212,8 @@ function display_lines($focus, $field, $value, $view)
 
                 $service .= "<tr>";
                 $service .= "<td class='tabDetailViewDF' style='text-align: left; padding:2px;'>".++$serviceCount."</td>";
+                $service .= "<td class='tabDetailViewDF' style='padding:2px;'>".$line_item->accdate."</td>";                
+                $service .= "<td class='tabDetailViewDF' style='padding:2px;'>".$wip_status."</td>";                
                 $service .= "<td class='tabDetailViewDF' style='padding:2px;' colspan='2'>".$line_item->name."</td>";
                 $service .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".currency_format_number($line_item->product_list_price, $params)."</td>";
 
