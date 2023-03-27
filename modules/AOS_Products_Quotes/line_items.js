@@ -107,6 +107,7 @@ function insertProductLine(tableid, groupid) {
   var vat_hidden = document.getElementById("vathidden").value;
   var discount_hidden = document.getElementById("discounthidden").value;
   var wip_statuses_hidden = document.getElementById("wipstatuseshidden").value;
+  var types_inout_hidden = document.getElementById("typesinouthidden").value;
 
   sqs_objects["product_name[" + prodln + "]"] = {
     "form": "EditView",
@@ -237,6 +238,12 @@ function insertProductLine(tableid, groupid) {
   var l1 = z.insertCell(0);
   // l1.colSpan = "7";
   l1.style.color = "rgb(68,68,68)";
+  l1.innerHTML = "<span style='vertical-align: top;' class='product_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_TYPE_INOUT') + " :&nbsp;&nbsp;</span>";
+  l1.innerHTML = l1.innerHTML += "<select tabindex='116' name='product_type_inout[" + prodln + "]' id='product_type_inout" + prodln + "' class='product_type_inout_select'>" + types_inout_hidden + "</select>";
+
+  var l1 = z.insertCell(1);
+  // l1.colSpan = "7";
+  l1.style.color = "rgb(68,68,68)";
   l1.innerHTML = "<span style='vertical-align: top;' class='product_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_WIP_STATUS') + " :&nbsp;&nbsp;</span>";
   l1.innerHTML = l1.innerHTML += "<select tabindex='116' name='product_wip_status[" + prodln + "]' id='product_wip_status" + prodln + "' class='product_wip_status_select'>" + wip_statuses_hidden + "</select>";
   
@@ -358,6 +365,7 @@ function insertServiceLine(tableid, groupid) {
   var vat_hidden = document.getElementById("vathidden").value;
   var discount_hidden = document.getElementById("discounthidden").value;
   var wip_statuses_hidden = document.getElementById("wipstatuseshidden").value;
+  var types_inout_hidden = document.getElementById("typesinouthidden").value;
 
   tablebody = document.createElement("tbody");
   tablebody.id = "service_body" + servln;
@@ -416,6 +424,12 @@ function insertServiceLine(tableid, groupid) {
   z.id = 'service_note_wip_status' + servln;
 
   var l1 = z.insertCell(0);
+  // l1.colSpan = "7";
+  l1.style.color = "rgb(68,68,68)";
+  l1.innerHTML = "<span style='vertical-align: top;' class='service_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_TYPE_INOUT') + " :&nbsp;&nbsp;</span>";
+  l1.innerHTML = l1.innerHTML += "<select tabindex='116' name='service_type_inout[" + prodln + "]' id='service_type_inout" + prodln + "' class='product_type_inout_select'>" + types_inout_hidden + "</select>";
+
+  var l1 = z.insertCell(1);
   // l1.colSpan = "7";
   l1.style.color = "rgb(68,68,68)";
   l1.innerHTML = "<span style='vertical-align: top;' class='service_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_WIP_STATUS') + " :&nbsp;&nbsp;</span>";

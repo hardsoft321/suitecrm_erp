@@ -6,10 +6,14 @@
  */
 
 /* Клиенты */
-$app_list_strings['porduct_quotes_wip_statuses'] = array (
+$app_list_strings['product_quotes_wip_statuses'] = array (
     'draft' => 'Draft',
     'plan' => 'Plan',
     'fact' => 'Fact',
     'archive' => 'Archive',
+);
+$app_list_strings['product_quotes_types_inout'] = array (
+    'in' => 'Income',
+    'out' => 'Outgoing',
 );
 

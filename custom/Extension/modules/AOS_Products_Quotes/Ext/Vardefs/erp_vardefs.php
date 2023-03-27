@@ -19,6 +19,16 @@ $dictionary["AOS_Products_Quotes"]["fields"]["wip_status"] = array (
     'type' => 'enum',
     'required' => true,
     'default' => 'draft',
-    'options' => 'porduct_quotes_wip_statuses',
+    'options' => 'product_quotes_wip_statuses',
+    'audited' => true,
+);
+
+$dictionary["AOS_Products_Quotes"]["fields"]["type_inout"] = array (
+    'name' => 'type_inout',
+    'vname' => 'LBL_TYPE_INOUT',
+    'type' => 'enum',
+    'required' => true,
+    'default' => 'in',
+    'options' => 'product_quotes_types_inout',
     'audited' => true,
 );

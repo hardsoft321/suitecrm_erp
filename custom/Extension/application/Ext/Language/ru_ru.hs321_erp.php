@@ -5,11 +5,15 @@
  * @package hs321_erp
  */
 
-/* Клиенты */
-$app_list_strings['porduct_quotes_wip_statuses'] = array (
+$app_list_strings['product_quotes_wip_statuses'] = array (
     'draft' => 'Черновик',
     'plan' => 'План',
     'fact' => 'Факт',
     'archive' => 'Архив',
 );
+$app_list_strings['product_quotes_types_inout'] = array (
+    'in' => 'Приход',
+    'out' => 'Расход',
+);
+
 

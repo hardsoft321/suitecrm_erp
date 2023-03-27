@@ -7,3 +7,4 @@
 
 $mod_strings['LBL_ACCDATE'] = 'Дата исполнения';
 $mod_strings['LBL_WIP_STATUS'] = 'WIP Статус';
+$mod_strings['LBL_TYPE_INOUT'] = 'Приход/Расход';
