@@ -1,3 +1,6 @@
 [submodule "packages/ru_ru"]
 	path = packages/ru_ru
 	url = https://github.com/likhobory/SuiteCRM7RU.git
+[submodule "packages/erp"]
+	path = packages/erp
+	url = https://github.com/hardsoft321/hs321_erp.git
