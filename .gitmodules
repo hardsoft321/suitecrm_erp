@@ -4,3 +4,6 @@
 [submodule "packages/erp"]
 	path = packages/erp
 	url = https://github.com/hardsoft321/hs321_erp.git
+[submodule "packages/erp_forms"]
+	path = packages/erp_forms
+	url = https://github.com/hardsoft321/hs321_erp_forms.git
