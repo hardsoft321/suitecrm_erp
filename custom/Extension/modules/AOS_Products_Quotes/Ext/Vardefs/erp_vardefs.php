@@ -28,7 +28,7 @@ $dictionary["AOS_Products_Quotes"]["fields"]["type_inout"] = array (
     'vname' => 'LBL_TYPE_INOUT',
     'type' => 'enum',
     'required' => true,
-    'default' => 'in',
+    'default' => 'out',
     'options' => 'product_quotes_types_inout',
     'audited' => true,
 );
