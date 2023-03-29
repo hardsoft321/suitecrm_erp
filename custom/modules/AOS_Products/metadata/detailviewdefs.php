@@ -117,7 +117,7 @@ array(
             'label' => 'LBL_DESCRIPTION',
           ),
         ),
-        6 => array('qty_plan', 'qty_fact'),
+        6 => array('qty_fact', 'qty_plan'),
         7 =>
         array(
           0 =>

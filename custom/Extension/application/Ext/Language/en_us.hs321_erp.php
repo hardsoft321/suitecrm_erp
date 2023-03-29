@@ -16,4 +16,5 @@ $app_list_strings['product_quotes_types_inout'] = array (
     'in' => 'Income',
     'out' => 'Outgoing',
 );
+$app_list_strings['product_type_dom']['Money'] = 'Money';
 

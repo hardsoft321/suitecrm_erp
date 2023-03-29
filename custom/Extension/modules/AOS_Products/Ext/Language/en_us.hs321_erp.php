@@ -5,5 +5,5 @@
  * @package hs321_erp
  */
 
-$mod_strings['LBL_QTY_PLAN'] = 'Plan remains';
-$mod_strings['LBL_QTY_FACT'] = 'Fact remains';
+$mod_strings['LBL_QTY_PLAN'] = 'Plan';
+$mod_strings['LBL_QTY_FACT'] = 'Fact';

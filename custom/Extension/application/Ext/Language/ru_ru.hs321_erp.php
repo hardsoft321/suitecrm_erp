@@ -15,5 +15,8 @@ $app_list_strings['product_quotes_types_inout'] = array (
     'in' => 'Приход',
     'out' => 'Расход',
 );
+$app_list_strings['product_type_dom']['Good'] = 'Товар';
+$app_list_strings['product_type_dom']['Service'] = 'Услуга';
+$app_list_strings['product_type_dom']['Money'] = 'Деньги';
 
 

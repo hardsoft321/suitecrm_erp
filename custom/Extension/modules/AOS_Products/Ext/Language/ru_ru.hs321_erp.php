@@ -5,5 +5,5 @@
  * @package hs321_erp
  */
 
-$mod_strings['LBL_QTY_PLAN'] = 'Плановый остаток';
-$mod_strings['LBL_QTY_FACT'] = 'Фактический остаток';
+$mod_strings['LBL_QTY_PLAN'] = 'План';
+$mod_strings['LBL_QTY_FACT'] = 'Факт';
