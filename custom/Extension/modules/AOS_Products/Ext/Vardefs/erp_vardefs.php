@@ -22,6 +22,7 @@ $dictionary["AOS_Products"]["fields"]["qty_plan"] = array (
         'required' => true,
         'default' => 0,
         'editable' => false,
+        'inline_edit' => false,
 );
 
 $dictionary["AOS_Products"]["fields"]["qty_fact"] = array (
@@ -39,6 +40,5 @@ $dictionary["AOS_Products"]["fields"]["qty_fact"] = array (
     'enable_range_search' => false,
     'precision' => '4',
     'required' => true,
-    'default' => 0,
-    'editable' => false,
+    'default' => 0,    
 );
