@@ -18,6 +18,7 @@ array(
           0 => 'EDIT',
           1 => 'DUPLICATE',
           2 => 'DELETE',
+          'RECALCULATE_PLAN' => array ('customCode' => '<input type="button" class="button" onClick="window.location.href = \'index.php?module=AOS_Products&action=recalculateplanremains&product_id={$fields.id.value}\';" value="{$MOD.LBL_RECALCULATE_PLAN}">'),
         ),
       ),
       'maxColumns' => '2',

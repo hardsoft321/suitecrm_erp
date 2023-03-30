@@ -42,5 +42,36 @@ class RecalculateRemainsHook {
         }
     }
 
+    static function recalculatePlan ($product_id) {
+        global $db;
+
+        $plan = $db->getOne("
+          SELECT SUM(CASE type_inout 
+                     WHEN 'in' THEN 1 
+                     WHEN 'out' THEN -1
+                     ELSE 0
+                     END) qty
+          FROM aos_products_quotes
+          WHERE deleted = 0
+            AND wip_status = 'plan'
+            AND product_id = '{$product_id}'
+          ",
+          false,
+          "Cannot calculate plan remain for '{$product_id}' product"
+        );
+
+        if (!$plan) $plan = 0;
+
+        $preferences = [];
+        while ($row = $db->fetchByAssoc($result)) {
+            $category = $row['category'];
+            $preferences[$category] = unserialize(base64_decode($row['contents']));
+        }
+
+        if ($prod = BeanFactory::getBean('AOS_Products', $product_id)) {
+            $prod->qty_plan = $plan + $prod->qty_fact;
+            $prod->save();
+        }
+    }
 
 }
