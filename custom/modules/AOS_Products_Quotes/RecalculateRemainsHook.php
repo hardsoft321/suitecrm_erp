@@ -50,7 +50,7 @@ class RecalculateRemainsHook {
                      WHEN 'in' THEN 1 
                      WHEN 'out' THEN -1
                      ELSE 0
-                     END) qty
+                     END * product_qty) qty
           FROM aos_products_quotes
           WHERE deleted = 0
             AND wip_status = 'plan'
