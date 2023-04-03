@@ -21,16 +21,20 @@ class RecalculateRemainsHook {
         if (!$bean->fetched_row) return;
 
         $recalc = false;
+        $factor = $bean->type_inout == 'in' ? 1 : -1;
         if ($bean->fetched_row['wip_status'] === 'draft' &&  $bean->wip_status === 'plan') {
             $recalc = true;
-            $factor = $bean->type_inout == 'in' ? 1 : -1;
             $plan = $bean->product_qty;
             $fact = 0;
+
+            $bean->qty_plan = self::getPlan ($bean->product_id, $bean->accdate)
+                            + $factor * $bean->product_qty;
         } else if ($bean->fetched_row['wip_status'] === 'plan' &&  $bean->wip_status === 'fact') {
             $recalc = true;
-            $factor = $bean->type_inout == 'in' ? 1 : -1;
+            
             $plan = 0;
             $fact = $bean->product_qty;
+            $bean->qty_plan = null;            
         }
 
         if ($recalc) {
@@ -38,11 +42,22 @@ class RecalculateRemainsHook {
                 $prod->qty_plan += $factor * $plan;
                 $prod->qty_fact += $factor * $fact;
                 $prod->save();
+                if ($bean->qty_plan !== null) $bean->qty_plan += $prod->qty_fact;
             }
         }
     }
 
-    static function recalculatePlan ($product_id) {
+    static function recalculatePlan ($product_id, $accdate = null) {
+        global $db;
+
+        if ($prod = BeanFactory::getBean('AOS_Products', $product_id)) {
+            $plan = self::getPlan($product_id, $accdate);
+            $prod->qty_plan = $plan + $prod->qty_fact;
+            $prod->save();
+        }
+    }
+
+    static function getPlan ($product_id, $accdate = null) {
         global $db;
 
         $plan = $db->getOne("
@@ -55,23 +70,13 @@ class RecalculateRemainsHook {
           WHERE deleted = 0
             AND wip_status = 'plan'
             AND product_id = '{$product_id}'
-          ",
+          " . ($accdate == null ? "" : " AND accdate <= '$accdate'"),
           false,
           "Cannot calculate plan remain for '{$product_id}' product"
         );
-
         if (!$plan) $plan = 0;
 
-        $preferences = [];
-        while ($row = $db->fetchByAssoc($result)) {
-            $category = $row['category'];
-            $preferences[$category] = unserialize(base64_decode($row['contents']));
-        }
-
-        if ($prod = BeanFactory::getBean('AOS_Products', $product_id)) {
-            $prod->qty_plan = $plan + $prod->qty_fact;
-            $prod->save();
-        }
-    }
+        return $plan;
+    }    
 
 }
