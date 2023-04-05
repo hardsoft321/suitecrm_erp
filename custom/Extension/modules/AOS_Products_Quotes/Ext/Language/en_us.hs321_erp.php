@@ -8,3 +8,4 @@
 $mod_strings['LBL_ACCDATE'] = 'Accdate';
 $mod_strings['LBL_WIP_STATUS'] = 'WIP Status';
 $mod_strings['LBL_TYPE_INOUT'] = 'IN/OUT';
+$mod_strings['LBL_QTY_PLAN'] = 'Plan';

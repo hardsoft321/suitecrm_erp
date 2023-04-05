@@ -8,3 +8,4 @@
 $mod_strings['LBL_QTY_PLAN'] = 'Plan';
 $mod_strings['LBL_QTY_FACT'] = 'Fact';
 $mod_strings['LBL_RECALCULATE_PLAN'] = 'Recalculate Plan';
+$mod_strings['LBL_QTY_PLAN'] = 'Plan';
