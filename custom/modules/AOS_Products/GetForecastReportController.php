@@ -8,15 +8,15 @@
  use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
  use Box\Spout\Common\Entity\Row;
 
-// require_once('include/formbase.php');
-
 // if ((BeanFactory::newBean('AOS_Products'))->ACLAccess('list') 
 if (!isset($_REQUEST['product_id'])) {
   die('Не передан product_id');
 }
 
 require_once("custom/modules/AOS_Products_Quotes/RecalculateRemainsHook.php");
+global $app_list_strings, $current_language;
 
+$doc_module = 'AOS_Quotes';
 
 $filename = "forecast_report_{$_REQUEST['product_id']}.xlsx";
 
@@ -32,21 +32,42 @@ $filePath = "php://output";
 
 $res = RecalculateRemainsHook::getForecast($_REQUEST['product_id']);
 
+$mod_strings = return_module_language($current_language, $doc_module);
+
+$labels['ACCDATE'] = 'Accdate';
+$labels['TYPE_INOUT'] = 'IN/OUT';
+$labels['PRODUCT_QTY'] = 'Product quantity';
+$labels['RUNNING_PRODUCT_QTY'] = 'Forecasst quantity';
+$labels['POS_ID'] = 'Pos ID';
+$labels['DOC_ID'] = 'Quote ID';
+$labels['DOC_NAME'] = 'Quote Name';
+
+foreach (['ACCDATE', 'TYPE_INOUT', 'PRODUCT_QTY', 'RUNNING_PRODUCT_QTY', 'POS_ID', 'DOC_ID', 'DOC_NAME'] as $l) {
+  if(!isset($mod_strings['LBL_FORECASTREPORT'][$l])) $mod_strings['LBL_FORECASTREPORT'][$l] = 'DEF ' . $labels[$l];
+}
+
 $cells = [
-  WriterEntityFactory::createCell('Ид продукта'),
-  WriterEntityFactory::createCell('Название продукта'),
-  WriterEntityFactory::createCell('Дата'),
-  // WriterEntityFactory::createCell('Прирост в день'),
-  WriterEntityFactory::createCell('Кол-во'),
+  WriterEntityFactory::createCell($mod_strings['LBL_FORECASTREPORT']['ACCDATE']),
+  WriterEntityFactory::createCell($mod_strings['LBL_FORECASTREPORT']['TYPE_INOUT']),
+  WriterEntityFactory::createCell($mod_strings['LBL_FORECASTREPORT']['PRODUCT_QTY']),
+  WriterEntityFactory::createCell($mod_strings['LBL_FORECASTREPORT']['RUNNING_PRODUCT_QTY']),
+  WriterEntityFactory::createCell($mod_strings['LBL_FORECASTREPORT']['POS_ID']),
+  WriterEntityFactory::createCell($mod_strings['LBL_FORECASTREPORT']['DOC_ID']),
+  WriterEntityFactory::createCell($mod_strings['LBL_FORECASTREPORT']['DOC_NAME']),
 ];
 $rows = [WriterEntityFactory::createRow($cells)];
 foreach ($res as $r) {
+  $type_inout = isset($app_list_strings['product_quotes_types_inout'][$r['type_inout']]) ?
+    $app_list_strings['product_quotes_types_inout'][$r['type_inout']] :
+    $r['type_inout'];
   $cells = [
-    WriterEntityFactory::createCell($r['product_id']),
-    WriterEntityFactory::createCell($r['product_name']),
     WriterEntityFactory::createCell($r['accdate']),
-    // WriterEntityFactory::createCell($r['product_qty']),
+    WriterEntityFactory::createCell($type_inout),
+    WriterEntityFactory::createCell($r['product_qty']),
     WriterEntityFactory::createCell($r['running_product_qty']),
+    WriterEntityFactory::createCell($r['pos_id']),
+    WriterEntityFactory::createCell($r['doc_id']),
+    WriterEntityFactory::createCell($r['doc_name']),
   ];
   $rows[] = WriterEntityFactory::createRow($cells);
 }
