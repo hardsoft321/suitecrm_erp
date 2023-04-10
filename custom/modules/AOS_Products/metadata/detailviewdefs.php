@@ -19,6 +19,7 @@ array(
           1 => 'DUPLICATE',
           2 => 'DELETE',
           'RECALCULATE_PLAN' => array ('customCode' => '<input type="button" class="button" onClick="window.location.href = \'index.php?module=AOS_Products&action=recalculateplanremains&product_id={$fields.id.value}\';" value="{$MOD.LBL_RECALCULATE_PLAN}">'),
+          'FORECAST_REPORT' => array ('customCode' => '<input type="button" class="button" onClick="window.location.href = \'index.php?module=AOS_Products&action=getforecastreport&product_id={$fields.id.value}\';" value="{$MOD.LBL_FORECAST_REPORT}">'),          
         ),
       ),
       'maxColumns' => '2',

@@ -1,0 +1,13 @@
+{
+  "name": "hs321/suitecrm-spout",
+  "description": "Adding box/spout dependences",
+  "homepage": "https://hardsoft321.ru",
+  "type": "project",
+  "license": "GPL-3.0",
+  "authors": [],
+  "minimum-stability": "dev",
+  "require": {
+    "box/spout": "3.3"
+  }
+}
+

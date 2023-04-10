@@ -79,4 +79,51 @@ class RecalculateRemainsHook {
         return $plan;
     }    
 
+    static function getForecast ($product_id) {
+        global $db;
+
+        $accdate = $db->convert($db->convert('accdate', 'date_format',array('%Y-%m-%d')), 'date');
+
+        $sql = "
+          SELECT
+            s.accdate,
+            s.product_name,
+            s.product_id,
+            s.product_qty,
+            coalesce(sum(s.product_qty) over (order by s.accdate, s.product_name, s.product_id 
+            rows between unbounded preceding and current row), 
+            0)  + s.qty_fact running_product_qty
+          FROM (
+            SELECT pos.accdate,
+                   prod.name product_name,
+                   prod.id product_id,
+                   prod.qty_fact qty_fact,
+                   SUM(CASE type_inout 
+                   WHEN 'in' THEN 1 
+                   WHEN 'out' THEN -1
+                   ELSE 0
+                   END * product_qty) product_qty
+            FROM aos_products_quotes pos
+            INNER JOIN aos_products prod ON prod.id = pos.product_id
+            WHERE pos.deleted = 0
+              AND pos.wip_status = 'plan'
+              AND pos.product_id = '{$product_id}'
+            GROUP BY pos.accdate, prod.name, prod.id, prod.qty_fact
+          ) s    
+          ORDER BY product_id, accdate
+        ";
+
+        $res = $db->query($sql, false, "Cannot get forecast data for '{$product_id}' product");
+        $result = array ();
+        while ($row = $db->fetchByAssoc($res)) {
+            $result[] = $row;
+        }
+
+        return $result;
+
+        if (!$plan) $plan = 0;
+
+        return $plan;
+    }    
+
 }
