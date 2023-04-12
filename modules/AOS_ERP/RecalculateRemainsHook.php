@@ -8,11 +8,18 @@
 class RecalculateRemainsHook {
 
     function before_save ($bean, $event, $arguments) {
+        global $sugar_config;
+
+        if (!isset($sugar_config['erp']['module'])) {
+            throw new Exception ("ERP module not set!");
+        }
+        $module = $sugar_config['erp']['module'];
+
         if ($bean->deleted) {
             throw new Exception ("before save for deleted record!");
         }
 
-        if ($bean->parent_type !== 'AOS_Quotes') return;
+        if ($bean->parent_type !== $module) return;
 
         if ($bean->product_id === '0') return;
 
@@ -58,7 +65,12 @@ class RecalculateRemainsHook {
     }
 
     static function getPlan ($product_id, $accdate = null) {
-        global $db;
+        global $db, $sugar_config;
+
+        if (!isset($sugar_config['erp']['module'])) {
+            throw new Exception ("ERP module not set!");
+        }
+        $module = $sugar_config['erp']['module'];        
 
         $plan = $db->getOne("
           SELECT SUM(CASE type_inout 
@@ -69,7 +81,8 @@ class RecalculateRemainsHook {
           FROM aos_products_quotes
           WHERE deleted = 0
             AND wip_status = 'plan'
-            AND product_id = '{$product_id}'
+            AND product_id = '$product_id'
+            AND parent_type = '$module'
           " . ($accdate == null ? "" : " AND accdate <= '$accdate'"),
           false,
           "Cannot calculate plan remain for '{$product_id}' product"
@@ -80,7 +93,16 @@ class RecalculateRemainsHook {
     }    
 
     static function getForecast ($product_id) {
-        global $db;
+        global $db, $sugar_config;
+
+        if (!isset($sugar_config['erp']['module'])) {
+            throw new Exception ("ERP module not set!");
+        }
+        $module = $sugar_config['erp']['module'];
+
+        if(!($bean = BeanFactory::newBean($module))) {
+            throw new Exception ("ERP module bean not set!");
+        }
 
         $accdate = $db->convert($db->convert('pos.accdate', 'date_format',array('%Y-%m-%d')), 'date');
 
@@ -109,11 +131,11 @@ class RecalculateRemainsHook {
                    END * product_qty product_qty_signed
             FROM aos_products_quotes pos
             INNER JOIN aos_products prod ON prod.id = pos.product_id
-            LEFT JOIN aos_quotes doc ON doc.id = pos.parent_id
+            LEFT JOIN {$bean->table_name} doc ON doc.id = pos.parent_id
             WHERE pos.deleted = 0
               AND pos.wip_status = 'plan'
-              AND pos.product_id = '{$product_id}'
-              AND pos.parent_type = 'AOS_Quotes'
+              AND pos.product_id = '$product_id'
+              AND pos.parent_type = '$module'
           ) s    
           ORDER BY accdate
         ";
@@ -123,14 +145,10 @@ class RecalculateRemainsHook {
         while ($row = $db->fetchByAssoc($res)) {
             $row['doc_name'] = htmlspecialchars_decode($row['doc_name']);
             $result[] = $row;
-            
         }
 
         return $result;
 
-        if (!$plan) $plan = 0;
-
-        return $plan;
     }    
 
 }

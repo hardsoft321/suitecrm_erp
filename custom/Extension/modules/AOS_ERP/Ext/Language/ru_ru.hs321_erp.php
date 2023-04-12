@@ -5,10 +5,12 @@
  * @package hs321_erp
  */
 
+ /*
 $mod_strings['LBL_ACCDATE'] = 'Дата исполнения';
 $mod_strings['LBL_WIP_STATUS'] = 'WIP статус';
 $mod_strings['LBL_TYPE_INOUT'] = 'Приход/Расход';
 $mod_strings['LBL_QTY_PLAN'] = 'План';
+*/
 
 $mod_strings['LBL_FORECASTREPORT']['ACCDATE'] = 'Дата';
 $mod_strings['LBL_FORECASTREPORT']['TYPE_INOUT'] = 'Приход/Расход';

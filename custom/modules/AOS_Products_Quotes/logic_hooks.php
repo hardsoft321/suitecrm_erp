@@ -5,7 +5,7 @@
 $hook_array = Array(); 
 // position, file, function 
 $hook_array['before_save'] = Array(); 
-$hook_array['before_save'][] = Array(100, 'Recalculating fact and plan remains for Quotes Positions', 'custom/modules/AOS_Products_Quotes/RecalculateRemainsHook.php','RecalculateRemainsHook', 'before_save'); 
+$hook_array['before_save'][] = Array(100, 'Recalculating fact and plan remains for Quotes Positions', 'modules/AOS_ERP/RecalculateRemainsHook.php','RecalculateRemainsHook', 'before_save'); 
 
 
 

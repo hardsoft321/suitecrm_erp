@@ -13,10 +13,12 @@ if (!isset($_REQUEST['product_id'])) {
   die('Не передан product_id');
 }
 
-require_once("custom/modules/AOS_Products_Quotes/RecalculateRemainsHook.php");
-global $app_list_strings, $current_language;
+require_once("modules/AOS_ERP/RecalculateRemainsHook.php");
+global $app_list_strings, $current_language, $sugar_config;
 
-$doc_module = 'AOS_Quotes';
+if(!isset($sugar_config['erp']['module'])) die('ERP Module not set');
+
+$doc_module = $sugar_config['erp']['module'];
 
 $filename = "forecast_report_{$_REQUEST['product_id']}.xlsx";
 
@@ -32,7 +34,7 @@ $filePath = "php://output";
 
 $res = RecalculateRemainsHook::getForecast($_REQUEST['product_id']);
 
-$mod_strings = return_module_language($current_language, $doc_module);
+$mod_strings = return_module_language($current_language, 'AOS_ERP');
 
 $labels['ACCDATE'] = 'Accdate';
 $labels['TYPE_INOUT'] = 'IN/OUT';
