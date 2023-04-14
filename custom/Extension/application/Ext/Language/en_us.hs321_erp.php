@@ -13,8 +13,8 @@ $app_list_strings['product_quotes_wip_statuses'] = array (
     'archive' => 'Archive',
 );
 $app_list_strings['product_quotes_types_inout'] = array (
-    'in' => 'Income',
-    'out' => 'Outgoing',
+    'in' => 'In',
+    'out' => 'Out',
 );
 $app_list_strings['product_type_dom']['Good'] = 'Good';
 $app_list_strings['product_type_dom']['Service'] = 'Service';
