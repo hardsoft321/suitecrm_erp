@@ -111,8 +111,8 @@ class RecalculateRemainsHook {
             s.accdate,
             s.type_inout,
             s.product_qty,
-            coalesce(sum(s.product_qty_signed) over (order by s.accdate rows between unbounded preceding and current row), 
-            0)  + s.qty_fact running_product_qty,
+            coalesce(sum(s.product_qty_signed) over (order by s.accdate, s.pos_id rows between unbounded preceding and current row), 
+            0) + s.qty_fact running_product_qty,
             s.doc_id,
             s.doc_name,
             s.pos_id
@@ -137,7 +137,7 @@ class RecalculateRemainsHook {
               AND pos.product_id = '$product_id'
               AND pos.parent_type = '$module'
           ) s    
-          ORDER BY accdate
+          ORDER BY s.accdate, s.pos_id
         ";
 
         $res = $db->query($sql, false, "Cannot get forecast data for '{$product_id}' product");

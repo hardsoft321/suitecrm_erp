@@ -76,7 +76,9 @@
     $result = $db->query($sql);
     $grand_total_price = 0;
     while ($row = $db->fetchByAssoc($result)) {
-        $grand_total_price += $row['product_total_price'];
+        if ($row['product_id']) {
+            $grand_total_price += $row['product_total_price'];
+        }
         
         $row['id'] = '';
         $row['parent_id'] = $contract->id;
@@ -104,6 +106,11 @@
         $prod_contract = BeanFactory::newBean('AOS_Products_Quotes');
         $prod_contract->populateFromRow($row);
         $prod_contract->save();
+        if ($row['product_id']) {
+            $prod_contract2 = (BeanFactory::newBean('AOS_Products_Quotes'))->retrieve($prod_contract->id);
+            $prod_contract2->wip_status = 'plan';
+            $prod_contract2->save();
+        }
     }
 
     $row = [];
@@ -146,7 +153,10 @@
 
     $prod_contract = BeanFactory::newBean('AOS_Products_Quotes');
     $prod_contract->populateFromRow($row);
-    $prod_contract->save();    
+    $prod_contract->save();
+    $prod_contract2 = (BeanFactory::newBean('AOS_Products_Quotes'))->retrieve($prod_contract->id);
+    $prod_contract2->wip_status = 'plan';
+    $prod_contract2->save();
 
     //Setting contract quote relationship
     require_once('modules/Relationships/Relationship.php');
