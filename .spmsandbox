@@ -22,7 +22,7 @@
 [erp]
     path = packages/erp
     id = hs321_erp
-    version = 0.7.3
+    version = 0.8.0
 
 [erp_forms]
     path = packages/erp_forms
