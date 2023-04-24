@@ -76,8 +76,8 @@ class GenerationERPData
     public function genRun() {
         global $db;
         global $sugar_config;
+        global $timedate;
         $data = [];
-
         if ((int)$_POST["count_gen_orders"] < 1 || (int)$_POST["max_count_gen_products"] < 1 || (int)$_POST["count_gen_contacts"] < 1) {
             return ['error' => 'Incorrect value: count_gen_orders or max_count_gen_products or count_gen_contacts'];
         }
@@ -149,7 +149,6 @@ class GenerationERPData
             $data[$count_gen_contacts]['Accounts'] = ['id' => $account->id, 'name' => $account->name];
 
             $count_gen_orders = (int)$_POST["count_gen_orders"];
-            $count_gen_orders = rand(1, $count_gen_orders);
 
             if ($_POST['random_products'] != 'true' && is_array($_POST['select_products']) && count($_POST['select_products']) > 0) {
                 $sql_end = "AND id IN ('".implode("', '", $_POST['select_products']) . "')";
@@ -173,6 +172,7 @@ class GenerationERPData
                 $total_amount = 0;
                 $total_amount_usdollar = 0;
                 $currency_id = -99;
+                $rand_date = date($timedate->get_db_date_time_format(), strtotime("+" . rand(0,7) . " days"));
                 while($row = $db->fetchByAssoc($res)) {
                     $count_item = rand(1,3);
                     $currency_id = $row['currency_id'];
@@ -288,7 +288,7 @@ class GenerationERPData
                     $AOS_Products_Quotes->group_id = $AOS_Line_Item_Groups->id;
                     $AOS_Products_Quotes->save();
                 }
-                $contract_id = createContract($AOS_Quotes->id);
+                $contract_id = createContract($AOS_Quotes->id, new DateTime($rand_date));
                 $data[$count_gen_contacts]['AOS_Contracts'][$c_quote] = ['id' => $contract_id, 'name' => $AOS_Quotes->name];
             }
             $count_gen_contacts--;

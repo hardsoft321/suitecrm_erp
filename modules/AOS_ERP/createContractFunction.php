@@ -5,8 +5,14 @@
  * @package hs321_erp
  */
 
- function createContract ($quote_id) {
+ function createContract ($quote_id, DateTime $quoteAccdate) {
     global $timedate, $sugar_config, $db;
+
+    if (!$quoteAccdate) $quoteAccdate = $timedate->now();
+    $prodAccdate = clone $quoteAccdate;
+    $prodAccdate->modify($sugar_config['erp']['quote']['product_accdate_modify']);
+    $paymentAccdate = clone $quoteAccdate;
+    $paymentAccdate->modify($sugar_config['erp']['quote']['payment_accdate_modify']);    
 
     require_once('modules/AOS_Quotes/AOS_Quotes.php');
     require_once('modules/AOS_Contracts/AOS_Contracts.php');
@@ -15,6 +21,7 @@
     $quote = BeanFactory::newBean('AOS_Quotes');
     $quote->retrieve($quote_id);
 
+ 
     //Setting Contract Values
     $contract = BeanFactory::newBean('AOS_Contracts');
     $contract->name = $quote->name;
@@ -23,6 +30,8 @@
     $contract->contract_account_id = $quote->billing_account_id;
     $contract->contact_id = $quote->billing_contact_id;
     $contract->opportunity_id = $quote->opportunity_id;
+    $contract->start_date = $timedate->asUserDate($quoteAccdate);
+    $contract->end_date = $timedate->asUserDate($prodAccdate);
 
     $contract->total_amt = $quote->total_amt;
     $contract->subtotal_amount = $quote->subtotal_amount;
@@ -100,7 +109,7 @@
         if ($row['product_id']) {
             $row['type_inout'] = 'out';
             $row['wip_status'] = 'draft';
-            $row['accdate'] = $timedate->asUser($timedate->getNow()->modify($sugar_config['erp']['quote']['product_accdate_modify']));
+            $row['accdate'] = $timedate->asUser($prodAccdate);
         }        
 
         $prod_contract = BeanFactory::newBean('AOS_Products_Quotes');
@@ -147,7 +156,7 @@
     $row['product_qty'] = format_number($grand_total_price);
     $row['wip_status'] = 'draft';
     $row['type_inout'] = 'in';
-    $row['accdate'] = $timedate->asUser($timedate->getNow()->modify($sugar_config['erp']['quote']['payment_accdate_modify']));
+    $row['accdate'] = $timedate->asUser($paymentAccdate);
     $row['group_id'] = $group_pay->id;
 
 

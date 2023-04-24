@@ -14,6 +14,6 @@
 
     require_once('modules/AOS_ERP/createContractFunction.php');
 
-    $contract_id = createContract($_REQUEST['record']);
+    $contract_id = createContract($_REQUEST['record'], new DateTime);
 
     header('Location: index.php?module=AOS_Contracts&action=EditView&record='.$contract_id);
