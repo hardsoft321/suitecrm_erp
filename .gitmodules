@@ -7,3 +7,6 @@
 [submodule "packages/erp_forms"]
 	path = packages/erp_forms
 	url = https://github.com/hardsoft321/hs321_erp_forms.git
+[submodule "packages/erp_genData"]
+	path = packages/erp_genData
+	url = https://github.com/hardsoft321/hs321_erp_genData

@@ -23,7 +23,7 @@ class GenerationERPDataViewGen extends SugarView
         $this->ss->assign("JAVASCRIPT", get_set_focus_js());
         $query = "SELECT id, CONCAT_WS(' ', first_name, last_name) as full_name
             FROM contacts
-            WHERE deleted = 0 AND contact_active_status = '10'";
+            WHERE deleted = 0";
         $res = $GLOBALS['db']->query($query);
         $users = [];
         while($row = $GLOBALS['db']->fetchByAssoc($res)) {

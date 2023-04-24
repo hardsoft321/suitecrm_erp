@@ -13,6 +13,7 @@ class GenerationERPData
     var $object_name = 'GenerationERPData';
     var $module_dir = 'GenerationERPData';
     var $module_name = 'GenerationERPData';
+    var $disable_vardefs = true;
 
     var $numbers = array('0','1','2','3','4','5','6','7','8','9');
     var $current_user_id = null;

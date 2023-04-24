@@ -28,3 +28,8 @@
     path = packages/erp_forms
     id = hs321_erp_forms
     version = 0.7.0
+
+[erp_genData]
+    path = packages/erp_genData
+    id = hs321_erp_genData
+    version = 0.0.1    
