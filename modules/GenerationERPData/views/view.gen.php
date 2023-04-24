@@ -32,7 +32,7 @@ class GenerationERPDataViewGen extends SugarView
         $this->ss->assign("CURRENT_CONTACTS", $users);
 
         $query = "SELECT id, CONCAT_WS(': ', part_number, name) as name FROM aos_products WHERE deleted = 0";
-        $query .= " LIMIT 500"; //TODO: Нужно сделать динамическую подгрузку
+        $query .= " ORDER BY date_entered DESC LIMIT 500"; //TODO: Нужно сделать динамическую подгрузку
         $res = $GLOBALS['db']->query($query);
         $products = ['' => ''];
         while($row = $GLOBALS['db']->fetchByAssoc($res)) {
