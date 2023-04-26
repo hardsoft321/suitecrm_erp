@@ -63,7 +63,7 @@ foreach ($res as $r) {
     $app_list_strings['product_quotes_types_inout'][$r['type_inout']] :
     $r['type_inout'];
   $cells = [
-    WriterEntityFactory::createCell($timedate->asUserDate(new DateTime($r['accdate']))),
+    WriterEntityFactory::createCell($timedate->asUserDate($timedate->fromDbType($r['accdate'],'datetime'), true)),
     WriterEntityFactory::createCell($type_inout),
     WriterEntityFactory::createCell($r['product_qty']),
     WriterEntityFactory::createCell($r['running_product_qty']),
