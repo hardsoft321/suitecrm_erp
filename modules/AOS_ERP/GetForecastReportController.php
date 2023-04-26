@@ -14,7 +14,7 @@ if (!isset($_REQUEST['product_id'])) {
 }
 
 require_once("modules/AOS_ERP/RecalculateRemainsHook.php");
-global $app_list_strings, $current_language, $sugar_config;
+global $app_list_strings, $current_language, $sugar_config, $timedate;
 
 if(!isset($sugar_config['erp']['module'])) die('ERP Module not set');
 
@@ -63,7 +63,7 @@ foreach ($res as $r) {
     $app_list_strings['product_quotes_types_inout'][$r['type_inout']] :
     $r['type_inout'];
   $cells = [
-    WriterEntityFactory::createCell($r['accdate']),
+    WriterEntityFactory::createCell($timedate->asUserDate(new DateTime($r['accdate']))),
     WriterEntityFactory::createCell($type_inout),
     WriterEntityFactory::createCell($r['product_qty']),
     WriterEntityFactory::createCell($r['running_product_qty']),

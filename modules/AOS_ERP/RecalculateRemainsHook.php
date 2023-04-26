@@ -104,7 +104,7 @@ class RecalculateRemainsHook {
             throw new Exception ("ERP module bean not set!");
         }
 
-        $accdate = $db->convert($db->convert('pos.accdate', 'date_format',array('%Y-%m-%d')), 'date');
+        $accdate = $db->convert($db->convert('pos.accdate', 'date_format',array('%Y-%m-%d %H:%i:%s')), 'datetime');
 
         $sql = "
           SELECT
