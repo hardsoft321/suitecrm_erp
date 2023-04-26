@@ -45,7 +45,6 @@ class GenerationERPDataViewGen extends SugarView
         $javascript = new javascript();
         $javascript->setFormName("GenerationERPData");
         $javascript->addFieldGeneric("count_gen_orders", "int", $mod_strings['LBL_MAX_COUNT_GEN_ORDERS'], true, "");
-        $javascript->addFieldGeneric("password", "varchar", $mod_strings['LBL_PASSWORD'], true, "");
         echo $javascript->getScript();
     }
 }

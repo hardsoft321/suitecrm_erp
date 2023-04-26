@@ -10,6 +10,9 @@
 <form name="GenerationERPData" enctype='multipart/form-data' method="POST" action="index.php" onSubmit="return (check_form('GenerationERPData'));">
 <input type='hidden' name='action' value='GenRun'/>
 <input type='hidden' name='module' value='GenerationERPData'/>
+<input type='hidden' name='module' value='GenerationERPData'/>
+<input type="hidden" name="return_module" value="GenerationERPData">
+<input type="hidden" name="return_action" value="GenView">
 <table width="100%" cellpadding="0" cellspacing="1" border="0" class="actionsContainer">
     <br>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view" style="margin-top:20px">
@@ -42,13 +45,6 @@
                 <input type="number" name='count_gen_orders' value='1' />
             </td>
         </tr>
-         {* <tr>
-            <td scope="row" width='15%' nowrap>{$MOD.LBL_CREATE_CONTRACTS}&nbsp; {sugar_help text=$MOD.LBL_CREATE_CONTRACTS_INFO}</td>
-            <td>
-                <input type="hidden" name='create_contracts' value='false'>
-                <input type='checkbox' name='create_contracts' value='true' id='create_contracts' CHECKED>
-            </td>
-        </tr> *}
     </table>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view" style="margin-top:20px">
         <tr>
@@ -69,7 +65,7 @@
             </td>
         </tr>
         <tr>
-            <td  scope="row" width='15%' nowrap>{$MOD.LBL_SELECT_PRODUCTS}: </span>{sugar_help text=$MOD.LBL_SELECT_PRODUCTS_INFO} </td>
+            <td  scope="row" width='15%' nowrap>{$MOD.LBL_SELECT_PRODUCTS}: <span class="required">*</span>{sugar_help text=$MOD.LBL_SELECT_PRODUCTS_INFO} </td>
             <td>
                 {html_options id="select_products" name="select_products[]" size="6" select2="" style="width: 100%" multiple="true" options=$SELECT_PRODUCTS}
             </td>
@@ -89,13 +85,14 @@
 </table>
 </form>
 <script type='text/javascript'>
-$('[class*="select2 select2-container select2-container"]').css('width','100%')
-$(function(){ldelim}
-    $("#select_products").select2();
+SUGAR.util.doWhen('document.readyState == "complete" && (typeof validate != "undefined")', function () {ldelim}
+    $('[class*="select2 select2-container select2-container"]').css('width','100%')
+    $(function(){ldelim}
+        $("#select_products").select2();
+    {rdelim});
+    hiddenSelectContactsFields();
+    hiddenSelectProductsFields();
 {rdelim});
-hiddenSelectContactsFields();
-hiddenSelectProductsFields();
-
 function hiddenSelectContactsFields() {ldelim}
     if ($('#new_contact').is(':checked')) {ldelim}
         $('#current_contacts').closest('tr').hide();
@@ -110,9 +107,11 @@ function hiddenSelectProductsFields() {ldelim}
     if ($('#random_products').is(':checked')) {ldelim}
         $('#select_products').closest('tr').hide();
         $('#max_count_gen_products').closest('tr').show();
+        removeFromValidate('GenerationERPData', 'select_products');
     {rdelim} else {ldelim}
         $('#select_products').closest('tr').show();
         $('#max_count_gen_products').closest('tr').hide();
+        addToValidate('GenerationERPData', 'select_products', 'varchar', true, SUGAR.language.get('GenerationERPData','LBL_SELECT_PRODUCTS'));
     {rdelim}
 {rdelim}
 </script>

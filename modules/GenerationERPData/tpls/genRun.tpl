@@ -28,7 +28,7 @@
                             <td width="30%">{$APP_LIST.moduleList.$key}</td>
                             <td width="20%" scope="row">
                                 <span class="link"></span>
-                                <a href="index.php?module={$key}&action=DetailView&record={$f.id}">{$f.name}</a>
+                                <a href="./index.php?module={$key}&action=DetailView&record={$f.id}">{$f.name}</a>
                             </td>
                         </tr>
                         {/foreach}
@@ -37,7 +37,7 @@
                         <td width="30%">{$APP_LIST.moduleList.$key}</td>
                         <td width="20%" scope="row">
                             <span class="link"></span>
-                            <a href="index.php?module={$key}&action=DetailView&record={$field.id}">{$field.name}</a>
+                            <a href="./index.php?module={$key}&action=DetailView&record={$field.id}">{$field.name}</a>
                         </td>
                     </tr>
                     {/if}

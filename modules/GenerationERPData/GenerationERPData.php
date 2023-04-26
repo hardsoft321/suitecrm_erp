@@ -81,7 +81,7 @@ class GenerationERPData
         if ((int)$_POST["count_gen_orders"] < 1 || (int)$_POST["max_count_gen_products"] < 1 || (int)$_POST["count_gen_contacts"] < 1) {
             return ['error' => 'Incorrect value: count_gen_orders or max_count_gen_products or count_gen_contacts'];
         }
-        if ($_POST['create_contracts'] == 'true' && !file_exists('modules/AOS_ERP/createContractFunction.php')) {
+        if (!file_exists('modules/AOS_ERP/createContractFunction.php')) {
             return ['error' => 'File "modules/AOS_ERP/createContractFunction.php" not found'];
         } else {
             require_once 'modules/AOS_ERP/createContractFunction.php';
@@ -172,7 +172,6 @@ class GenerationERPData
                 $total_amount = 0;
                 $total_amount_usdollar = 0;
                 $currency_id = -99;
-                $rand_date = date($timedate->get_db_date_time_format(), strtotime("+" . rand(0,7) . " days"));
                 while($row = $db->fetchByAssoc($res)) {
                     $count_item = rand(1,3);
                     $currency_id = $row['currency_id'];
@@ -265,6 +264,7 @@ class GenerationERPData
             $c_quote = 0;
             foreach($filling_fields as $filling_field) {
                 $c_quote++;
+                $rand_date = date($timedate->get_db_date_time_format(), strtotime("+" . rand(0,7) . " days"));
                 $AOS_Quotes = new AOS_Quotes();
                 foreach($filling_field['AOS_Quotes'] as $field => $value) {
                     $AOS_Quotes->$field = $value;
