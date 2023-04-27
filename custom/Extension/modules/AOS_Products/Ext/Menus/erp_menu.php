@@ -10,7 +10,7 @@ if (isset($sugar_config['erp']['module'])) {
   
           
     if (ACLController::checkAccess($erp_module, 'edit', true)) {
-        $module_menu[]=array("index.php?module=AOS_ERP&action=createPurchaseContracts&return_module=AOS_Products&return_action=index", $mod_strings['LNK_CREATE_PURCHASE_CONTRACTS'],"Create2", 'Accounts2');
+        $module_menu[]=array("index.php?module=AOS_ERP&action=createPurchaseContracts&return_module=AOS_Products", $mod_strings['LNK_CREATE_PURCHASE_CONTRACTS'],"CreatePurchase", 'AOS_Products');
     }
 }  
 

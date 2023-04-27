@@ -5,7 +5,7 @@
  * @package hs321_erp
  */
 
- function createPurchaseContracts ($seller_id) {
+ function createPurchaseContracts ($seller_id, $product_id = null) {
     global $timedate, $sugar_config, $db;
 
     require_once('modules/AOS_Contracts/AOS_Contracts.php');
@@ -16,6 +16,8 @@
     $erp_module = $sugar_config['erp']['module'];   
     
     $payment_product = $db->fetchByAssoc($db->retrieve(BeanFactory::newBean('AOS_Products'), ['part_number' => $sugar_config['erp']['quote']['payment_part_number']]));
+
+    $productSql = $product_id ? " AND prod.id = '$product_id'" : "";
 
     $sql = "
     SELECT 
@@ -28,6 +30,7 @@
     WHERE deleted = 0
       AND qty_plan < 0
       AND prod.type != 'Money'
+      $productSql
     ";
     $sqlres = $db->query($sql, false);
     $res = [];
@@ -56,20 +59,12 @@
         $now = new DateTime();
         if ($inAccdate <= $now)  $inAccdate = $now->modify('+1 day');
 
-    //     $res[] = [$row['id'], $row['name'], $row['part_number'], $row['qty_plan'], $outAccdate, $inAccdate, $inAccdate2];
-    // var_dump($res);
-    // die();
-
-    // return $result;
-
         $total_amount = -$prodRow['qty_plan']*$prodRow['cost'];
 
         $contract = BeanFactory::newBean('AOS_Contracts');
         $contract->name = "Закуп товара \"{$prodRow['name']}\"";
         $contract->total_contract_value = format_number($total_amount);
         $contract->contract_account_id = $seller_id;
-    //   $contract->contact_id = $quote->billing_contact_id;
-    //   $contract->opportunity_id = $quote->opportunity_id;
 
         $contract->total_amt = $total_amount;
         $contract->subtotal_amount = $total_amount;
@@ -80,8 +75,7 @@
         $contract->shipping_tax_amt = 0;
         $contract->total_amount = $total_amount;
         $contract->total_contact_value = $total_amount;
-        
-        // $contract->currency_id = $payment_product['id'];
+        $contract->currency_id = $payment_product['id'];
 
         $contract->save();
 
@@ -172,7 +166,5 @@
         $prod_contract2 = (BeanFactory::newBean('AOS_Products_Quotes'))->retrieve($prod_contract->id);
         $prod_contract2->wip_status = 'plan';
         $prod_contract2->save();
-
-        // return $contract->id;
     }
 }

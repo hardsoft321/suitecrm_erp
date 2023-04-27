@@ -19,6 +19,7 @@ array(
           1 => 'DUPLICATE',
           2 => 'DELETE',
           'RECALCULATE_PLAN' => array ('customCode' => '<input type="button" class="button" onClick="window.location.href = \'index.php?module=AOS_ERP&action=recalculateplanremains&product_id={$fields.id.value}&return_id={$fields.id.value}&return_module=AOS_Products\';" value="{$MOD.LBL_RECALCULATE_PLAN}">'),
+          'CREATE_PURCHASE_CONTRACTS' => array ('customCode' => '<input type="button" class="button" onClick="window.location.href = \'index.php?module=AOS_ERP&action=createPurchaseContracts&product_id={$fields.id.value}&return_id={$fields.id.value}&return_module=AOS_Products&return_action=DetailView\';" value="{$MOD.LNK_CREATE_PURCHASE_CONTRACTS}">'),
           'FORECAST_REPORT' => array ('customCode' => '<input type="button" class="button" onClick="window.location.href = \'index.php?module=AOS_ERP&action=getforecastreport&product_id={$fields.id.value}\';" value="{$MOD.LBL_FORECAST_REPORT}">'),          
         ),
       ),
