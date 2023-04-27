@@ -31,15 +31,6 @@ class GenerationERPDataViewGen extends SugarView
         }
         $this->ss->assign("CURRENT_CONTACTS", $users);
 
-        $query = "SELECT id, CONCAT_WS(': ', part_number, name) as name FROM aos_products WHERE deleted = 0";
-        $query .= " ORDER BY date_entered DESC LIMIT 500"; //TODO: Нужно сделать динамическую подгрузку
-        $res = $GLOBALS['db']->query($query);
-        $products = ['' => ''];
-        while($row = $GLOBALS['db']->fetchByAssoc($res)) {
-            $products[$row['id']] = $row['name'];
-        }
-        $this->ss->assign("SELECT_PRODUCTS", $products);
-
         $this->ss->display('modules/GenerationERPData/tpls/genView.tpl');
 
         $javascript = new javascript();

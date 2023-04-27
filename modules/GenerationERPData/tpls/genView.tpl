@@ -67,7 +67,7 @@
         <tr>
             <td  scope="row" width='15%' nowrap>{$MOD.LBL_SELECT_PRODUCTS}: <span class="required">*</span>{sugar_help text=$MOD.LBL_SELECT_PRODUCTS_INFO} </td>
             <td>
-                {html_options id="select_products" name="select_products[]" size="6" select2="" style="width: 100%" multiple="true" options=$SELECT_PRODUCTS}
+                {html_options id="select_products" name="select_products[]" size="6" select2="" style="width: 100%" multiple="true" options=''}
             </td>
             <td  scope="row"></td>
             <td></td>
@@ -88,7 +88,37 @@
 SUGAR.util.doWhen('document.readyState == "complete" && (typeof validate != "undefined")', function () {ldelim}
     $('[class*="select2 select2-container select2-container"]').css('width','100%')
     $(function(){ldelim}
-        $("#select_products").select2();
+        //$("#select_products").select2();
+        $("#select_products").select2({ldelim}
+            tags: true,
+            multiple: true,
+            tokenSeparators: [',', ' '],
+            minimumInputLength: 2,
+            minimumResultsForSearch: 10,
+            ajax: {ldelim}
+                url: 'index.php?module=GenerationERPData&action=getProducts',
+                dataType: "json",
+                type: "GET",
+                data: function (params) {ldelim}
+                    var queryParameters = {ldelim}
+                        term: params.term
+                    {rdelim}
+                    return queryParameters;
+                {rdelim},
+                processResults: function (data) {ldelim}
+                    return {ldelim}
+                        results: $.map(data, function (val) {ldelim}
+                            return $.map(val, function (item){ldelim}
+                                return {ldelim}
+                                    text: item.name,
+                                    id: item.id
+                                {rdelim}
+                            {rdelim})
+                        {rdelim})
+                    {rdelim};
+                {rdelim}
+            {rdelim}
+        {rdelim});
     {rdelim});
     hiddenSelectContactsFields();
     hiddenSelectProductsFields();
