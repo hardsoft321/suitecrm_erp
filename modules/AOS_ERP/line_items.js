@@ -1,40 +1,7 @@
 /**
- *
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- *
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
- * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
+ * @license http://hardsoft321.org/license/ GPLv3
+ * @author  Leon Nikitin <nlv@lab321.ru>
+ * @package hs321_erp
  */
 
 var lineno;
@@ -106,6 +73,8 @@ function insertProductLine(tableid, groupid) {
 
   var vat_hidden = document.getElementById("vathidden").value;
   var discount_hidden = document.getElementById("discounthidden").value;
+  var wip_statuses_hidden = document.getElementById("wipstatuseshidden").value;
+  var types_inout_hidden = document.getElementById("typesinouthidden").value;
 
   sqs_objects["product_name[" + prodln + "]"] = {
     "form": "EditView",
@@ -154,19 +123,27 @@ function insertProductLine(tableid, groupid) {
   var x = tablebody.insertRow(-1);
   x.id = 'product_line' + prodln;
 
-  var a = x.insertCell(0);
+  var a0 = x.insertCell(0);
+  a0.colSpan = "2";
+  b = "<div class='col-xs-12 col-sm-8 edit-view-field' type='date' field='product_accdate" + prodln + "'><span class='dateTime'>";
+  b = b + "<input class='date_input' autocomplete='off' type='text' name='product_accdate[" + prodln + "]' id='product_accdate" + prodln + "'  value='' title='' tabindex='115' style='width:80%'>"
+  b = b + "<button type='button' id='product_accdate" + prodln + "_trigger' class='btn btn-danger' onclick='return false;'><span class='suitepicon suitepicon-module-calendar' alt='Ввод даты'></span></button>";
+  b = b + "</span></div>";
+  a0.innerHTML = b;
+  var a = x.insertCell(1);
+  
   a.innerHTML = "<input type='text' name='product_product_qty[" + prodln + "]' id='product_product_qty" + prodln + "'  value='' title='' tabindex='116' onblur='Quantity_format2Number(" + prodln + ");calculateLine(" + prodln + ",\"product_\");' class='product_qty'>";
 
-  var b = x.insertCell(1);
+  var b = x.insertCell(2);
   b.innerHTML = "<input class='sqsEnabled product_name' autocomplete='off' type='text' name='product_name[" + prodln + "]' id='product_name" + prodln + "' maxlength='50' value='' title='' tabindex='116' value=''><input type='hidden' name='product_product_id[" + prodln + "]' id='product_product_id" + prodln + "'  maxlength='50' value=''>";
 
-  var b1 = x.insertCell(2);
+  var b1 = x.insertCell(3);
   b1.innerHTML = "<input class='sqsEnabled product_part_number' autocomplete='off' type='text' name='product_part_number[" + prodln + "]' id='product_part_number" + prodln + "' maxlength='50' value='' title='' tabindex='116' value=''>";
 
-  var b2 = x.insertCell(3);
+  var b2 = x.insertCell(4);
   b2.innerHTML = "<button title='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_TITLE') + "' accessKey='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_KEY') + "' type='button' tabindex='116' class='button product_part_number_button' value='" + SUGAR.language.get('app_strings', 'LBL_SELECT_BUTTON_LABEL') + "' name='btn1' onclick='openProductPopup(" + prodln + ");'><span class=\"suitepicon suitepicon-action-select\"></span></button>";
 
-  var c = x.insertCell(4);
+  var c = x.insertCell(5);
   c.innerHTML = "<input type='text' name='product_product_list_price[" + prodln + "]' id='product_product_list_price" + prodln + "' maxlength='50' value='' title='' tabindex='116' onblur='calculateLine(" + prodln + ",\"product_\");' class='product_list_price'><input type='hidden' name='product_product_cost_price[" + prodln + "]' id='product_product_cost_price" + prodln + "' value=''  />";
 
   if (typeof currencyFields !== 'undefined'){
@@ -176,31 +153,31 @@ function insertProductLine(tableid, groupid) {
 
   }
 
-  var d = x.insertCell(5);
+  var d = x.insertCell(6);
   d.innerHTML = "<input type='text' name='product_product_discount[" + prodln + "]' id='product_product_discount" + prodln + "'  maxlength='50' value='' title='' tabindex='116' onblur='calculateLine(" + prodln + ",\"product_\");' onblur='calculateLine(" + prodln + ",\"product_\");' class='product_discount_text'><input type='hidden' name='product_product_discount_amount[" + prodln + "]' id='product_product_discount_amount" + prodln + "' value=''  />";
   d.innerHTML += "<select tabindex='116' name='product_discount[" + prodln + "]' id='product_discount" + prodln + "' onchange='calculateLine(" + prodln + ",\"product_\");' class='product_discount_amount_select'>" + discount_hidden + "</select>";
 
-  var e = x.insertCell(6);
+  var e = x.insertCell(7);
   e.innerHTML = "<input type='text' name='product_product_unit_price[" + prodln + "]' id='product_product_unit_price" + prodln + "' maxlength='50' value='' title='' tabindex='116' readonly='readonly' onblur='calculateLine(" + prodln + ",\"product_\");' onblur='calculateLine(" + prodln + ",\"product_\");' class='product_unit_price'>";
 
   if (typeof currencyFields !== 'undefined'){
     currencyFields.push("product_product_unit_price" + prodln);
   }
 
-  var f = x.insertCell(7);
+  var f = x.insertCell(8);
   f.innerHTML = "<input type='text' name='product_vat_amt[" + prodln + "]' id='product_vat_amt" + prodln + "' maxlength='250' value='' title='' tabindex='116' readonly='readonly' class='product_vat_amt_text'>";
   f.innerHTML += "<select tabindex='116' name='product_vat[" + prodln + "]' id='product_vat" + prodln + "' onchange='calculateLine(" + prodln + ",\"product_\");' class='product_vat_amt_select'>" + vat_hidden + "</select>";
 
   if (typeof currencyFields !== 'undefined'){
     currencyFields.push("product_vat_amt" + prodln);
   }
-  var g = x.insertCell(8);
+  var g = x.insertCell(9);
   g.innerHTML = "<input type='text' name='product_product_total_price[" + prodln + "]' id='product_product_total_price" + prodln + "' maxlength='50' value='' title='' tabindex='116' readonly='readonly' class='product_total_price'><input type='hidden' name='product_group_number[" + prodln + "]' id='product_group_number" + prodln + "' value='"+groupid+"'>";
 
   if (typeof currencyFields !== 'undefined'){
     currencyFields.push("product_product_total_price" + prodln);
   }
-  var h = x.insertCell(9);
+  var h = x.insertCell(10);
   h.innerHTML = "<input type='hidden' name='product_currency[" + prodln + "]' id='product_currency" + prodln + "' value=''><input type='hidden' name='product_deleted[" + prodln + "]' id='product_deleted" + prodln + "' value='0'><input type='hidden' name='product_id[" + prodln + "]' id='product_id" + prodln + "' value=''><button type='button' id='product_delete_line" + prodln + "' class='button product_delete_line' value='" + SUGAR.language.get(module_sugar_grp1, 'LBL_REMOVE_PRODUCT_LINE') + "' tabindex='116' onclick='markLineDeleted(" + prodln + ",\"product_\")'><span class=\"suitepicon suitepicon-action-clear\"></span></button><br>";
 
 
@@ -211,7 +188,7 @@ function insertProductLine(tableid, groupid) {
   y.id = 'product_note_line' + prodln;
 
   var h1 = y.insertCell(0);
-  h1.colSpan = "5";
+  h1.colSpan = "7";
   h1.style.color = "rgb(68,68,68)";
   h1.innerHTML = "<span style='vertical-align: top;' class='product_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_PRODUCT_DESCRIPTION') + " :&nbsp;&nbsp;</span>";
   h1.innerHTML += "<textarea tabindex='116' name='product_item_description[" + prodln + "]' id='product_item_description" + prodln + "' rows='2' cols='23' class='product_item_description'></textarea>&nbsp;&nbsp;";
@@ -222,9 +199,40 @@ function insertProductLine(tableid, groupid) {
   i.innerHTML = "<span style='vertical-align: top;' class='product_description_label'>"  + SUGAR.language.get(module_sugar_grp1, 'LBL_PRODUCT_NOTE') + " :&nbsp;</span>";
   i.innerHTML += "<textarea tabindex='116' name='product_description[" + prodln + "]' id='product_description" + prodln + "' rows='2' cols='23' class='product_description'></textarea>&nbsp;&nbsp;"
 
+  var z = tablebody.insertRow(-1);
+  z.id = 'product_note_wip_status' + prodln;
+
+  var l1 = z.insertCell(0);
+  // l1.colSpan = "7";
+  l1.style.color = "rgb(68,68,68)";
+  l1.innerHTML = "<span style='vertical-align: top;' class='product_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_TYPE_INOUT') + " :&nbsp;&nbsp;</span>";
+  l1.innerHTML = l1.innerHTML += "<select tabindex='116' name='product_type_inout[" + prodln + "]' id='product_type_inout" + prodln + "' class='product_type_inout_select'>" + types_inout_hidden + "</select>";
+
+  var l1 = z.insertCell(1);
+  // l1.colSpan = "7";
+  l1.style.color = "rgb(68,68,68)";
+  l1.innerHTML = "<span style='vertical-align: top;' class='product_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_WIP_STATUS') + " :&nbsp;&nbsp;</span>";
+  l1.innerHTML = l1.innerHTML += "<select tabindex='116' name='product_wip_status[" + prodln + "]' id='product_wip_status" + prodln + "' class='product_wip_status_select'>" + wip_statuses_hidden + "</select>";
+  
   addToValidate('EditView','product_product_id'+prodln,'id',true,"Please choose a product");
 
   addAlignedLabels(prodln, 'product');
+
+ 
+  Calendar.setup ({ 
+    inputField : 'product_accdate' + prodln , 
+    form : 'EditView', 
+    // ifFormat : '%m/%d/%Y %H:%M', 
+    // daFormat : '%m/%d/%Y %H:%M', 
+    ifFormat : cal_date_format, 
+    daFormat : cal_date_format,     
+    button : 'product_accdate' + prodln + '_trigger', 
+    singleClick : true, 
+    dateStr : '', 
+    startWeekday: 0, 
+    step : 1, 
+    weekNumbers:false 
+  })
 
   prodln++;
 
@@ -323,6 +331,8 @@ function insertServiceLine(tableid, groupid) {
 
   var vat_hidden = document.getElementById("vathidden").value;
   var discount_hidden = document.getElementById("discounthidden").value;
+  var wip_statuses_hidden = document.getElementById("wipstatuseshidden").value;
+  var types_inout_hidden = document.getElementById("typesinouthidden").value;
 
   tablebody = document.createElement("tbody");
   tablebody.id = "service_body" + servln;
@@ -331,44 +341,81 @@ function insertServiceLine(tableid, groupid) {
   var x = tablebody.insertRow(-1);
   x.id = 'service_line' + servln;
 
-  var a = x.insertCell(0);
+  var a0 = x.insertCell(0);
+  a0.colSpan = "2";
+  b = "<div class='col-xs-12 col-sm-8 edit-view-field' type='date' field='service_accdate" + servln + "'><span class='dateTime'>";
+  b = b + "<input class='date_input' autocomplete='off' type='text' name='service_accdate[" + servln + "]' id='service_accdate" + servln + "'  value='' title='' tabindex='115' style='width:80%'>"
+  b = b + "<button type='button' id='service_accdate" + servln + "_trigger' class='btn btn-danger' onclick='return false;'><span class='suitepicon suitepicon-module-calendar' alt='Ввод даты'></span></button>";
+  b = b + "</span></div>";
+  a0.innerHTML = b;
+  
+
+  var a = x.insertCell(1);
   a.colSpan = "4";
   a.innerHTML = "<textarea name='service_name[" + servln + "]' id='service_name" + servln + "'  cols='64' title='' tabindex='116' class='service_name'></textarea><input type='hidden' name='service_product_id[" + servln + "]' id='service_product_id" + servln + "'  maxlength='50' value='0'>";
 
-  var a1 = x.insertCell(1);
+  var a1 = x.insertCell(2);
   a1.innerHTML = "<input type='text' name='service_product_list_price[" + servln + "]' id='service_product_list_price" + servln + "' maxlength='50' value='' title='' tabindex='116'   onblur='calculateLine(" + servln + ",\"service_\");' class='service_list_price'>";
 
   if (typeof currencyFields !== 'undefined'){
     currencyFields.push("service_product_list_price" + servln);
   }
 
-  var a2 = x.insertCell(2);
+  var a2 = x.insertCell(3);
   a2.innerHTML = "<input type='text' name='service_product_discount[" + servln + "]' id='service_product_discount" + servln + "'  maxlength='50' value='' title='' tabindex='116' onblur='calculateLine(" + servln + ",\"service_\");' onblur='calculateLine(" + servln + ",\"service_\");' class='service_discount_text'><input type='hidden' name='service_product_discount_amount[" + servln + "]' id='service_product_discount_amount" + servln + "' value=''/>";
   a2.innerHTML += "<select tabindex='116' name='service_discount[" + servln + "]' id='service_discount" + servln + "' onchange='calculateLine(" + servln + ",\"service_\");' class='service_discount_select'>" + discount_hidden + "</select>";
 
-  var b = x.insertCell(3);
+  var b = x.insertCell(4);
   b.innerHTML = "<input type='text' name='service_product_unit_price[" + servln + "]' id='service_product_unit_price" + servln + "' maxlength='50' value='' title='' tabindex='116'   onblur='calculateLine(" + servln + ",\"service_\");' class='service_unit_price'>";
 
   if (typeof currencyFields !== 'undefined'){
     currencyFields.push("service_product_unit_price" + servln);
   }
-  var c = x.insertCell(4);
+  var c = x.insertCell(5);
   c.innerHTML = "<input type='text' name='service_vat_amt[" + servln + "]' id='service_vat_amt" + servln + "' maxlength='250' value='' title='' tabindex='116' readonly='readonly' class='service_vat_text'>";
   c.innerHTML += "<select tabindex='116' name='service_vat[" + servln + "]' id='service_vat" + servln + "' onchange='calculateLine(" + servln + ",\"service_\");' class='service_vat_select'>" + vat_hidden + "</select>";
   if (typeof currencyFields !== 'undefined'){
     currencyFields.push("service_vat_amt" + servln);
   }
 
-  var e = x.insertCell(5);
+  var e = x.insertCell(6);
   e.innerHTML = "<input type='text' name='service_product_total_price[" + servln + "]' id='service_product_total_price" + servln + "' maxlength='50' value='' title='' tabindex='116' readonly='readonly' class='service_total_price'><input type='hidden' name='service_group_number[" + servln + "]' id='service_group_number" + servln + "' value='"+ groupid +"'>";
 
   if (typeof currencyFields !== 'undefined'){
     currencyFields.push("service_product_total_price" + servln);
   }
-  var f = x.insertCell(6);
+  var f = x.insertCell(7);
   f.innerHTML = "<input type='hidden' name='service_deleted[" + servln + "]' id='service_deleted" + servln + "' value='0'><input type='hidden' name='service_id[" + servln + "]' id='service_id" + servln + "' value=''><button type='button' class='button service_delete_line' id='service_delete_line" + servln + "' value='" + SUGAR.language.get(module_sugar_grp1, 'LBL_REMOVE_PRODUCT_LINE') + "' tabindex='116' onclick='markLineDeleted(" + servln + ",\"service_\")'><span class=\"suitepicon suitepicon-action-clear\"></span></button><br>";
 
+  var z = tablebody.insertRow(-1);
+  z.id = 'service_note_wip_status' + servln;
+
+  var l1 = z.insertCell(0);
+  // l1.colSpan = "7";
+  l1.style.color = "rgb(68,68,68)";
+  l1.innerHTML = "<span style='vertical-align: top;' class='service_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_TYPE_INOUT') + " :&nbsp;&nbsp;</span>";
+  l1.innerHTML = l1.innerHTML += "<select tabindex='116' name='service_type_inout[" + prodln + "]' id='service_type_inout" + prodln + "' class='product_type_inout_select'>" + types_inout_hidden + "</select>";
+
+  var l1 = z.insertCell(1);
+  // l1.colSpan = "7";
+  l1.style.color = "rgb(68,68,68)";
+  l1.innerHTML = "<span style='vertical-align: top;' class='service_item_description_label'>" + SUGAR.language.get(module_sugar_grp1, 'LBL_WIP_STATUS') + " :&nbsp;&nbsp;</span>";
+  l1.innerHTML = l1.innerHTML += "<select tabindex='116' name='service_wip_status[" + servln + "]' id='service_wip_status" + servln + "' class='service_wip_status_select'>" + wip_statuses_hidden + "</select>";
+
   addAlignedLabels(servln, 'service');
+
+  Calendar.setup ({ 
+    inputField : 'service_accdate' + servln , 
+    form : 'EditView', 
+    ifFormat : cal_date_format, 
+    daFormat : cal_date_format, 
+    button : 'service_accdate' + servln + '_trigger', 
+    singleClick : true, 
+    dateStr : '', 
+    startWeekday: 0, 
+    step : 1, 
+    weekNumbers:false 
+  })
 
   servln++;
 
@@ -390,39 +437,45 @@ function insertProductHeader(tableid){
   x.id='product_head';
 
   var a=x.insertCell(0);
+  a.colSpan = "2";
+  a.style.color="rgb(68,68,68)";
+  a.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_ACCDATE');  
+
+
+  var a=x.insertCell(1);
   a.style.color="rgb(68,68,68)";
   a.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_PRODUCT_QUANITY');
 
-  var b=x.insertCell(1);
+  var b=x.insertCell(2);
   b.style.color="rgb(68,68,68)";
   b.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_PRODUCT_NAME');
 
-  var b1=x.insertCell(2);
+  var b1=x.insertCell(3);
   b1.colSpan = "2";
   b1.style.color="rgb(68,68,68)";
   b1.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_PART_NUMBER');
 
-  var c=x.insertCell(3);
+  var c=x.insertCell(4);
   c.style.color="rgb(68,68,68)";
   c.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_LIST_PRICE');
 
-  var d=x.insertCell(4);
+  var d=x.insertCell(5);
   d.style.color="rgb(68,68,68)";
   d.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_DISCOUNT_AMT');
 
-  var e=x.insertCell(5);
+  var e=x.insertCell(6);
   e.style.color="rgb(68,68,68)";
   e.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_UNIT_PRICE');
 
-  var f=x.insertCell(6);
+  var f=x.insertCell(7);
   f.style.color="rgb(68,68,68)";
   f.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_VAT_AMT');
 
-  var g=x.insertCell(7);
+  var g=x.insertCell(8);
   g.style.color="rgb(68,68,68)";
   g.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_TOTAL_PRICE');
 
-  var h=x.insertCell(8);
+  var h=x.insertCell(9);
   h.style.color="rgb(68,68,68)";
   h.innerHTML='&nbsp;';
 }
@@ -442,31 +495,36 @@ function insertServiceHeader(tableid){
   x.id='service_head';
 
   var a=x.insertCell(0);
+  a.colSpan = "2";
+  a.style.color="rgb(68,68,68)";
+  a.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_ACCDATE');
+
+  var a=x.insertCell(1);
   a.colSpan = "4";
   a.style.color="rgb(68,68,68)";
   a.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_SERVICE_NAME');
 
-  var b=x.insertCell(1);
+  var b=x.insertCell(2);
   b.style.color="rgb(68,68,68)";
   b.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_SERVICE_LIST_PRICE');
 
-  var c=x.insertCell(2);
+  var c=x.insertCell(3);
   c.style.color="rgb(68,68,68)";
   c.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_SERVICE_DISCOUNT');
 
-  var d=x.insertCell(3);
+  var d=x.insertCell(4);
   d.style.color="rgb(68,68,68)";
   d.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_SERVICE_PRICE');
 
-  var e=x.insertCell(4);
+  var e=x.insertCell(5);
   e.style.color="rgb(68,68,68)";
   e.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_VAT_AMT');
 
-  var f=x.insertCell(5);
+  var f=x.insertCell(6);
   f.style.color="rgb(68,68,68)";
   f.innerHTML=SUGAR.language.get(module_sugar_grp1, 'LBL_TOTAL_PRICE');
 
-  var g=x.insertCell(6);
+  var g=x.insertCell(7);
   g.style.color="rgb(68,68,68)";
   g.innerHTML='&nbsp;';
 }

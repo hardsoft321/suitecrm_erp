@@ -1,30 +1,13 @@
 <?php
 /**
- * Advanced OpenSales, Advanced, robust set of sales modules.
- * @package Advanced OpenSales for SugarCRM
- * @copyright SalesAgility Ltd http://www.salesagility.com
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
- * along with this program; if not, see http://www.gnu.org/licenses
- * or write to the Free Software Foundation,Inc., 51 Franklin Street,
- * Fifth Floor, Boston, MA 02110-1301  USA
- *
- * @author SalesAgility <info@salesagility.com>
+ * @license http://hardsoft321.org/license/ GPLv3
+ * @author  Leon Nikitin <nlv@lab321.ru>
+ * @package hs321_erp
  */
 
-function display_lines($focus, $field, $value, $view)
+function display_lines_erp($focus, $field, $value, $view)
 {
-    global $sugar_config, $locale, $app_list_strings, $mod_strings;
+    global $sugar_config, $locale, $app_list_strings, $mod_strings, $timedate;
 
     $enable_groups = (int)$sugar_config['aos']['lineItems']['enableGroups'];
     $total_tax = (int)$sugar_config['aos']['lineItems']['totalTax'];
@@ -32,10 +15,7 @@ function display_lines($focus, $field, $value, $view)
     $html = '';
 
     if ($view == 'EditView') {
-        $html .= '<script src="modules/AOS_Products_Quotes/line_items.js"></script>';
-        if (file_exists('custom/modules/AOS_Products_Quotes/line_items.js')) {
-            $html .= '<script src="custom/modules/AOS_Products_Quotes/line_items.js"></script>';
-        }
+        $html .= '<script src="modules/AOS_ERP/line_items.js"></script>';
         $html .= '<script language="javascript">var sig_digits = '.$locale->getPrecision().';';
         $html .= 'var module_sugar_grp1 = "'.$focus->module_dir.'";';
         $html .= 'var enable_groups = '.$enable_groups.';';
@@ -50,7 +30,9 @@ function display_lines($focus, $field, $value, $view)
             $html .= "</div>";
         }
         $html .= '<input type="hidden" name="vathidden" id="vathidden" value="'.get_select_options_with_id($app_list_strings['vat_list'], '').'">
-				  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">';
+				  <input type="hidden" name="discounthidden" id="discounthidden" value="'.get_select_options_with_id($app_list_strings['discount_list'], '').'">
+                  <input type="hidden" name="wipstatuseshidden" id="wipstatuseshidden" value="'.get_select_options_with_id($app_list_strings['product_quotes_wip_statuses'], '').'">
+                  <input type="hidden" name="typesinouthidden" id="typesinouthidden" value="'.get_select_options_with_id($app_list_strings['product_quotes_types_inout'], '').'">';
         if ($focus->id != '') {
             require_once('modules/AOS_Products_Quotes/AOS_Products_Quotes.php');
             require_once('modules/AOS_Line_Item_Groups/AOS_Line_Item_Groups.php');
@@ -150,11 +132,26 @@ function display_lines($focus, $field, $value, $view)
                 $groupEnd .= "<td class='tabDetailViewDL' style='text-align: right;padding:2px;'>".currency_format_number($group_item->total_amount, $params)."</td>";
                 $groupEnd .= "</tr>";
             }
+            if (isset($app_list_strings['product_quotes_wip_statuses'][$line_item->wip_status])) {
+                $wip_status = $app_list_strings['product_quotes_wip_statuses'][$line_item->wip_status];
+            } else {
+                $wip_status = $line_item->wip_status;
+            }
+            if (isset($app_list_strings['product_quotes_types_inout'][$line_item->type_inout])) {
+                $type_inout = $app_list_strings['product_quotes_types_inout'][$line_item->type_inout];
+            } else {
+                $type_inout = $line_item->type_inout;
+            }            
             if ($line_item->product_id != '0' && $line_item->product_id != null) {
                 if ($productCount == 0) {
                     $product .= "<tr>";
+                    
                     $product .= "<td width='5%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>&nbsp;</td>";
+                    $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_ACCDATE']."</td>";
+                    $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_TYPE_INOUT']."</td>";
+                    $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_WIP_STATUS']."</td>";
                     $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_PRODUCT_QUANITY']."</td>";
+                    $product .= "<td width='10%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_QTY_PLAN']."</td>";
                     $product .= "<td width='12%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_PRODUCT_NAME']."</td>";
                     $product .= "<td width='12%' class='tabDetailViewDL' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_LIST_PRICE']."</td>";
                     $product .= "<td width='12%' class='tabDetailViewDL' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_DISCOUNT_AMT']."</td>";
@@ -168,12 +165,16 @@ function display_lines($focus, $field, $value, $view)
                 $product .= "<tr>";
                 $product_note = wordwrap($line_item->description, 40, "<br />\n");
                 $product .= "<td class='tabDetailViewDF' style='text-align: left; padding:2px;'>".++$productCount."</td>";
-                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".stripDecimalPointsAndTrailingZeroes(format_number($line_item->product_qty), $sep[1])."</td>";
+                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".$line_item->accdate."</td>";
+                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".$type_inout."</td>";
+                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".$wip_status."</td>";
+                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".stripDecimalPointsAndTrailingZeroes_erp(format_number($line_item->product_qty), $sep[1])."</td>";
+                $product .= "<td class='tabDetailViewDF' style='padding:2px;'>".stripDecimalPointsAndTrailingZeroes_erp(format_number($line_item->qty_plan), $sep[1])."</td>";
 
                 $product .= "<td class='tabDetailViewDF' style='padding:2px;'><a href='index.php?module=AOS_Products&action=DetailView&record=".$line_item->product_id."' class='tabDetailViewDFLink'>".$line_item->name."</a><br />".$product_note."</td>";
                 $product .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".currency_format_number($line_item->product_list_price, $params)."</td>";
 
-                $product .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".get_discount_string($line_item->discount, $line_item->product_discount, $params, $locale, $sep)."</td>";
+                $product .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".get_discount_string_erp($line_item->discount, $line_item->product_discount, $params, $locale, $sep)."</td>";
 
                 $product .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".currency_format_number($line_item->product_unit_price, $params)."</td>";
                 if ($locale->getPrecision()) {
@@ -188,6 +189,9 @@ function display_lines($focus, $field, $value, $view)
                 if ($serviceCount == 0) {
                     $service .= "<tr>";
                     $service .= "<td width='5%' class='tabDetailViewDL' style='text-align: left;padding:2px;' scope='row'>&nbsp;</td>";
+                    $service .= "<td width='10%' class='dataLabel' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_ACCDATE']."</td>";
+                    $service .= "<td width='10%' class='dataLabel' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_TYPE_INOUT']."</td>";
+                    $service .= "<td width='10%' class='dataLabel' style='text-align: left;padding:2px;' scope='row'>".$mod_strings['LBL_WIP_STATUS']."</td>";
                     $service .= "<td width='46%' class='dataLabel' style='text-align: left;padding:2px;' colspan='2' scope='row'>".$mod_strings['LBL_SERVICE_NAME']."</td>";
                     $service .= "<td width='12%' class='dataLabel' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_SERVICE_LIST_PRICE']."</td>";
                     $service .= "<td width='12%' class='dataLabel' style='text-align: right;padding:2px;' scope='row'>".$mod_strings['LBL_SERVICE_DISCOUNT']."</td>";
@@ -200,10 +204,13 @@ function display_lines($focus, $field, $value, $view)
 
                 $service .= "<tr>";
                 $service .= "<td class='tabDetailViewDF' style='text-align: left; padding:2px;'>".++$serviceCount."</td>";
+                $service .= "<td class='tabDetailViewDF' style='padding:2px;'>".$line_item->accdate."</td>";
+                $service .= "<td class='tabDetailViewDF' style='padding:2px;'>".$type_inout."</td>";
+                $service .= "<td class='tabDetailViewDF' style='padding:2px;'>".$wip_status."</td>";
                 $service .= "<td class='tabDetailViewDF' style='padding:2px;' colspan='2'>".$line_item->name."</td>";
                 $service .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".currency_format_number($line_item->product_list_price, $params)."</td>";
 
-                $service .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".get_discount_string($line_item->discount, $line_item->product_discount, $params, $locale, $sep)."</td>";
+                $service .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".get_discount_string_erp($line_item->discount, $line_item->product_discount, $params, $locale, $sep)."</td>";
 
 
                 $service .= "<td class='tabDetailViewDF' style='text-align: right; padding:2px;'>".currency_format_number($line_item->product_unit_price, $params)."</td>";
@@ -225,12 +232,12 @@ function display_lines($focus, $field, $value, $view)
 //field was 0.
 //The approach below will strip off the fractional part if it is only zeroes (and in this case the decimal separator
 //will also be stripped off) The custom decimal separator is passed in to the function from the locale settings
-function stripDecimalPointsAndTrailingZeroes($inputString, $decimalSeparator)
+function stripDecimalPointsAndTrailingZeroes_erp($inputString, $decimalSeparator)
 {
     return preg_replace('/'.preg_quote($decimalSeparator).'[0]+$/', '', $inputString);
 }
 
-function get_discount_string($type, $amount, $params, $locale, $sep)
+function get_discount_string_erp($type, $amount, $params, $locale, $sep)
 {
     if ($amount != '' && $amount != '0.00') {
         if ($type == 'Amount') {
@@ -241,21 +248,4 @@ function get_discount_string($type, $amount, $params, $locale, $sep)
         return format_number($amount)."%";
     }
     return "-";
-}
-
-function display_shipping_vat($focus, $field, $value, $view)
-{
-    if ($view == 'EditView') {
-        global $app_list_strings;
-
-        if ($value != '') {
-            $value = format_number($value);
-        }
-
-        $html = "<input id='shipping_tax_amt' type='text' tabindex='0' title='' value='".$value."' maxlength='26,6' size='22' name='shipping_tax_amt' onblur='calculateTotal(\"lineItems\");'>";
-        $html .= "<select name='shipping_tax' id='shipping_tax' onchange='calculateTotal(\"lineItems\");' >".get_select_options_with_id($app_list_strings['vat_list'], (isset($focus->shipping_tax) ? $focus->shipping_tax : ''))."</select>";
-
-        return $html;
-    }
-    return format_number($value);
 }
