@@ -144,6 +144,8 @@ class RecalculateRemainsHook {
         $result = array ();
         while ($row = $db->fetchByAssoc($res)) {
             $row['doc_name'] = htmlspecialchars_decode($row['doc_name']);
+            $row['product_qty'] = (float)$row['product_qty'];
+            $row['running_product_qty'] = (float)$row['running_product_qty'];
             $result[] = $row;
         }
 
